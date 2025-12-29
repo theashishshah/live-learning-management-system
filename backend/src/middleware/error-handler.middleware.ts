@@ -10,7 +10,7 @@ export const errorHandler = (
 ) => {
   const mapped = mapError(err);
 
-  console.log("error handler middleware runnin...", err);
+  console.log("error handler middleware running...", err);
   if (mapped.status === 500) console.error(err);
 
   return failure(
