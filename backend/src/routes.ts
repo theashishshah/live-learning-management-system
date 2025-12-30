@@ -1,18 +1,20 @@
-import express, { type Request, type Response } from "express";
-import {
-  loginHandler,
-  signupHandler,
-} from "../modules/auth/auth.controller.js";
-import { authenticate } from "./middleware/auth.middleware.js";
+import { Router, type Response } from "express";
+import authRoutes from "../modules/auth/auth.routes.js";
+import userRoutes from "../modules/user/user.routes.js";
+import classRoutes from "../modules/classes/class.routes.js";
+import { success } from "./core/api-response/response.helper.js";
 
-const routes = express.Router();
-routes.get("/login", loginHandler);
-routes.post("/signup", signupHandler);
-routes.get("/test", authenticate, (req: Request, res: Response) => {
-  return res.status(200).json({
+const router = Router();
+
+router.get("/helth", (_, res: Response) => {
+  return success(res, {
     success: true,
-    message: "User is authencticated",
+    message: "Server working good.",
   });
 });
 
-export default routes;
+router.use("/auth", authRoutes);
+router.use("/users", userRoutes);
+router.use("/classes", classRoutes);
+
+export default router;

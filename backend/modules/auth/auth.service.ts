@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { User } from "../user/user.model.js";
+import { User } from "../user/user.schema.js";
 import { AppError } from "../../src/core/errors/AppError.js";
 import { mapError } from "../../src/core/errors/error-maper.js";
 import { signAccessToken } from "./auth.jwt.js";
