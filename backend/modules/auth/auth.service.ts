@@ -4,6 +4,7 @@ import { AppError } from "../../src/core/errors/AppError.js";
 import { mapError } from "../../src/core/errors/error-maper.js";
 import { signAccessToken } from "./auth.jwt.js";
 import type { CreateUserInput } from "../user/user.schema.js";
+import type { CreateLoginInput } from "./auth.schema.js";
 
 //TODO: implement access and refresh token as well
 
@@ -51,21 +52,11 @@ export const signup = async (
 };
 
 export const login = async (
-  email: string,
-  password: string,
+  input: CreateLoginInput,
 ): Promise<AuthApiResponse> => {
-  if (!password?.trim() || !email?.trim())
-    throw new AppError(
-      "VALIDATION_ERROR",
-      400,
-      "Email or password is missing.",
-    );
-  const normalizedEmail = email.trim().toLowerCase();
-
+  const { email, password } = input;
   try {
-    const user = await User.findOne({ email: normalizedEmail }).select(
-      "+passwordHash",
-    );
+    const user = await User.findOne({ email }).select("+passwordHash");
 
     if (!user)
       throw new AppError(

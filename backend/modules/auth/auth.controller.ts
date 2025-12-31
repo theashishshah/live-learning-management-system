@@ -3,6 +3,7 @@ import { login, signup } from "./auth.service.js";
 import { success } from "../../src/core/api-response/response.helper.js";
 import { setAuthCookie } from "../../src/core/http/cookie.js";
 import { createUserSchema } from "../user/user.schema.js";
+import { createLoginSchema } from "./auth.schema.js";
 
 export const signupHandler = async (
   req: Request,
@@ -26,8 +27,8 @@ export const loginHandler = async (
   next: NextFunction,
 ) => {
   try {
-    const { email, password } = req.body;
-    const { user, accessToken } = await login(email, password);
+    const data = createLoginSchema.parse(req.body);
+    const { user, accessToken } = await login(data);
     setAuthCookie(res, accessToken);
     success(res, { user }, 200);
   } catch (err) {
