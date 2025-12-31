@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../core/errors/AppError.js";
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
+import type { Role } from "../../modules/auth/auth.service.js";
 
 export const authenticate = async (
   req: Request,
@@ -27,7 +28,7 @@ export const authenticate = async (
     //TODO: test it
     req.user = {
       userId: payload.userId as string,
-      role: payload.role,
+      role: payload.role as Role,
     };
     next();
   } catch (err) {

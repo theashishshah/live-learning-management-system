@@ -7,9 +7,9 @@ import { success } from "./core/api-response/response.helper.js";
 const router = Router();
 
 router.get("/helth", (_, res: Response) => {
-  return success(res, {
+  return res.status(200).json({
     success: true,
-    message: "Server working good.",
+    message: "Server health is good.",
   });
 });
 
