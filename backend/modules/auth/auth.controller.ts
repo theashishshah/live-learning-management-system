@@ -1,7 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import { login, signup, me } from "./auth.service.js";
 import { sendResponse } from "../../src/core/api-response/api-responder.js";
-import { clearAuthCookie, setAuthCookie } from "../../src/core/http/cookie.js";
+import {
+  setAccessTokenToCookie,
+  setRefreshTokenToCookie,
+  clearAuthCookie,
+} from "../../src/core/http/cookie.js";
 import { createUserSchema } from "../user/user.schema.js";
 import { createLoginSchema } from "./auth.schema.js";
 import { AppError } from "../../src/core/errors/AppError.js";
@@ -12,10 +16,17 @@ export const signupHandler = async (
   next: NextFunction,
 ) => {
   try {
-    const data = createUserSchema.parse(req.body);
-    const { user, accessToken } = await signup({ ...data, role: "student" });
-    setAuthCookie(res, accessToken);
-
+    const data = createUserSchema.parse({
+      ...req.body,
+      userAgent: req.headers["user-agent"],
+      ip: req.ip,
+    });
+    const { user, accessToken, refreshToken } = await signup({
+      ...data,
+      role: "student",
+    });
+    setAccessTokenToCookie(res, accessToken);
+    setRefreshTokenToCookie(res, refreshToken);
     sendResponse(res, { user }, 201);
   } catch (error) {
     next(error);
@@ -28,9 +39,15 @@ export const loginHandler = async (
   next: NextFunction,
 ) => {
   try {
-    const data = createLoginSchema.parse(req.body);
-    const { user, accessToken } = await login(data);
-    setAuthCookie(res, accessToken);
+    const data = createLoginSchema.parse({
+      ...req.body,
+      userAgent: req.headers["user-agent"],
+      ip: req.ip,
+    });
+
+    const { user, accessToken, refreshToken } = await login(data);
+    setAccessTokenToCookie(res, accessToken);
+    setRefreshTokenToCookie(res, refreshToken);
     sendResponse(res, { user }, 200);
   } catch (err) {
     next(err);

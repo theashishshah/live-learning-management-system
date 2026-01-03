@@ -1,9 +1,11 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { User } from "../user/user.model.js";
 import { AppError } from "../../src/core/errors/AppError.js";
-import { signAccessToken } from "./auth.jwt.js";
+import { signAccessToken, signRefreshToken } from "./auth.jwt.js";
 import type { CreateUserInput } from "../user/user.schema.js";
 import type { CreateLoginInput } from "./auth.schema.js";
+import { Session } from "./session.model.js";
 
 //TODO: implement access and refresh token as well
 
@@ -14,6 +16,7 @@ export type AuthApiResponse = {
     role: Role;
   };
   accessToken: string;
+  refreshToken: string;
 };
 
 export type Role = "student" | "teacher";
@@ -21,7 +24,13 @@ export type Role = "student" | "teacher";
 export const signup = async (
   input: CreateUserInput,
 ): Promise<AuthApiResponse> => {
-  const { email, password, role } = input;
+  const {
+    email,
+    password,
+    role,
+    userAgent = "chrome default",
+    ip = "198.168.92.1 default",
+  } = input;
 
   const passwordHash = await bcrypt.hash(password, 12);
 
@@ -30,6 +39,21 @@ export const signup = async (
       email,
       passwordHash,
       role,
+    });
+
+    const refreshToken = signRefreshToken({ userId: user._id.toString() });
+
+    const refreshTokenHash = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+
+    await Session.create({
+      userId: user._id,
+      refreshTokenHash,
+      userAgent,
+      ip,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
     });
 
     const accessToken = signAccessToken({
@@ -44,6 +68,7 @@ export const signup = async (
         role: user.role,
       },
       accessToken,
+      refreshToken,
     };
   } catch (error) {
     throw error;
@@ -53,7 +78,13 @@ export const signup = async (
 export const login = async (
   input: CreateLoginInput,
 ): Promise<AuthApiResponse> => {
-  const { email, password } = input;
+  const {
+    email,
+    password,
+    userAgent = "chrome deafult",
+    ip = "192.168.1.2 default",
+  } = input;
+
   try {
     const user = await User.findOne({ email }).select("+passwordHash");
 
@@ -72,6 +103,23 @@ export const login = async (
         "Email or password is incorrect",
       );
 
+    const refreshToken = signRefreshToken({
+      userId: user._id.toString(),
+    });
+
+    const refreshTokenHash = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+
+    await Session.create({
+      userId: user._id,
+      refreshTokenHash,
+      userAgent,
+      ip,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    });
+
     const accessToken = signAccessToken({
       userId: user._id.toString(),
       role: user.role,
@@ -79,6 +127,7 @@ export const login = async (
 
     return {
       accessToken,
+      refreshToken,
       user: {
         id: user._id.toString(),
         email: user.email,

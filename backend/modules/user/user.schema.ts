@@ -12,6 +12,8 @@ export const createUserSchema = z
       .max(72, "why are you keeping your password this big?"),
 
     role: z.enum(["student", "teacher"]).default("student"),
+    userAgent: z.string().trim().optional(),
+    ip: z.string().trim().optional(),
   })
   .strict();
 
