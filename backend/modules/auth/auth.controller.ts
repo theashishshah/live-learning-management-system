@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { login, signup, me } from "./auth.service.js";
+import { login, signup, me, refreshSession } from "./auth.service.js";
 import { sendResponse } from "../../src/core/api-response/api-responder.js";
 import {
   setAccessTokenToCookie,
@@ -82,5 +82,28 @@ export const logoutHandler = async (
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const refreshHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const refreshToken = req.cookies?.refresh_token;
+    if (!refreshToken) {
+      throw new AppError("UNAUTHORIZED", 401);
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await refreshSession(refreshToken);
+
+    setAccessTokenToCookie(res, accessToken);
+    setRefreshTokenToCookie(res, newRefreshToken);
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    next(err);
   }
 };
