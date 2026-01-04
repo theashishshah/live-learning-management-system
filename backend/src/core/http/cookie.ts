@@ -5,6 +5,9 @@ const REFRESH_TOKEN_EXPIRES_IN = 30;
 
 export const clearAuthCookie = (res: Response) => {
   res.clearCookie("access_token");
+  res.clearCookie("refresh_token", {
+    path: "/api/v1/auth/refresh",
+  });
 };
 
 export const setAccessTokenToCookie = (res: Response, accessToken: string) => {
