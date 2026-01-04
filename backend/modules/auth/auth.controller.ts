@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { login, signup, me, refreshSession } from "./auth.service.js";
+import { login, signup, me, refreshSession, logout } from "./auth.service.js";
 import { sendResponse } from "../../src/core/api-response/api-responder.js";
 import {
   setAccessTokenToCookie,
@@ -49,8 +49,8 @@ export const loginHandler = async (
     setAccessTokenToCookie(res, accessToken);
     setRefreshTokenToCookie(res, refreshToken);
     sendResponse(res, { user }, 200);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -75,11 +75,16 @@ export const logoutHandler = async (
   next: NextFunction,
 ) => {
   try {
+    const refreshToken = req.cookies?.refresh_token;
+    await logout(refreshToken);
     clearAuthCookie(res);
-    return sendResponse(res, {
-      success: true,
-      message: "user logged out.",
-    });
+    sendResponse(
+      res,
+      {
+        message: "user logged out successfully",
+      },
+      200,
+    );
   } catch (error) {
     next(error);
   }
@@ -103,7 +108,7 @@ export const refreshHandler = async (
     setRefreshTokenToCookie(res, newRefreshToken);
 
     return res.status(200).json({ success: true });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 };

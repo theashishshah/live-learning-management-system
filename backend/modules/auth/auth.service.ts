@@ -224,6 +224,7 @@ export const refreshSession = async (refreshToken: string) => {
     .update(newRefreshToken)
     .digest("hex");
 
+  // rotate session
   session.refreshTokenHash = newRefreshTokenHash;
   await session.save();
 
@@ -240,4 +241,15 @@ export const refreshSession = async (refreshToken: string) => {
     accessToken: newAccessToken,
     refreshToken: newRefreshToken,
   };
+};
+
+export const logout = async (refreshToken: string) => {
+  if (!refreshToken) return;
+
+  const refreshTokenHash = crypto
+    .createHash("sha256")
+    .update(refreshToken)
+    .digest("hex");
+
+  await Session.deleteOne({ refreshTokenHash });
 };
