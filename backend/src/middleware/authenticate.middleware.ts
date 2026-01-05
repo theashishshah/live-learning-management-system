@@ -6,7 +6,7 @@ import type { Role } from "../../modules/auth/auth.service.js";
 
 export const authenticate = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) => {
   try {
@@ -24,9 +24,6 @@ export const authenticate = async (
 
     if (!payload.userId)
       throw new AppError("UNAUTHORIZED", 401, "Token expired");
-
-    //TODO: test it
-    console.log("authenticate server");
 
     req.user = {
       userId: payload.userId as string,
