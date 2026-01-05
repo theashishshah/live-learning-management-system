@@ -9,8 +9,6 @@ export const errorHandler = (
   next: NextFunction,
 ) => {
   const mapped = mapError(err);
-
-  console.log("error handler middleware running...", err);
   if (mapped.status === 500) console.error(err);
 
   return sendFailure(
