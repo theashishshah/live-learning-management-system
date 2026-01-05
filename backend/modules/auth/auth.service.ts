@@ -11,7 +11,8 @@ import type { CreateUserInput } from "../user/user.schema.js";
 import type { CreateLoginInput } from "./auth.schema.js";
 import { Session } from "./session.model.js";
 
-//TODO: implement access and refresh token as well
+//TODO: implement access and refresh token as well✅
+// TODO: implemet password reset -> v2
 
 export type AuthApiResponse = {
   user: {
@@ -167,6 +168,7 @@ export const me = async ({ userId }: { userId: string }) => {
 
 export const refreshSession = async (refreshToken: string) => {
   let payload: { userId: string };
+  console.log("refresh service:", refreshToken);
 
   try {
     payload = verifyRefreshToken(refreshToken);

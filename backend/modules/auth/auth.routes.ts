@@ -14,6 +14,6 @@ authRoutes.get("/me", authenticate, meHandler);
 authRoutes.get("/login", loginHandler);
 authRoutes.post("/signup", signupHandler);
 authRoutes.get("/logout", logoutHandler);
-authRoutes.get("/refresh", refreshHandler);
+authRoutes.post("/refresh", refreshHandler);
 
 export default authRoutes;
