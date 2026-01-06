@@ -6,11 +6,8 @@ import type { ClassDocument } from "./class.model.js";
  * Pure domain level rule: No Express, No HTTP
  */
 
-export function assertClassOwnership(
-  classEntity: ClassDocument,
-  userId: string,
-): void {
-  if (classEntity.teacherId.toString() !== userId) {
-    throw new AppError("FORBIDDEN", 403);
-  }
+export function assertClassOwnership(classEntity: ClassDocument, userId: string): void {
+    if (classEntity.teacherId.toString() !== userId) {
+        throw new AppError("FORBIDDEN", 403, "You don't have permission");
+    }
 }
