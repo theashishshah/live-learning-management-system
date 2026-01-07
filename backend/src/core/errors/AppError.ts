@@ -5,7 +5,8 @@ export type ErrorCode =
     | "VALIDATION_ERROR"
     | "INVALID_CREDENTIALS"
     | "CONFLICT"
-    | "INTERNAL_ERROR";
+    | "INTERNAL_ERROR"
+    | "BAD_REQUEST";
 
 export class AppError extends Error {
     public readonly code: ErrorCode;
