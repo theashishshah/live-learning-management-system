@@ -4,27 +4,33 @@ import { Types } from "mongoose";
 import type { CreateClassInput } from "./class.schema.js";
 
 export const createClass = async (className: string, teacherId: string) => {
-    const res = await Class.create({
-        className,
-        teacherId: new Types.ObjectId(teacherId),
-        studentIds: [],
-    });
+  const res = await Class.create({
+    className,
+    teacherId: new Types.ObjectId(teacherId),
+    studentIds: [],
+  });
 
-    return res;
+  return res;
 };
 
-export const addStudentToClass = async (classId: string, teacherId: string, studentId: string) => {
-    const cls = await Class.findOne({
-        _id: new Object(classId),
-        teacherId: new Object(teacherId),
-    });
+export const addStudentToClass = async (
+  classId: string,
+  teacherId: string,
+  studentId: string,
+) => {
+  const cls = await Class.findOne({
+    _id: new Object(classId),
+    teacherId: new Object(teacherId),
+  });
 
-    if (!cls) return null;
+  if (!cls) return null;
 
-    if (!cls.studentIds.includes(new Types.ObjectId(studentId))) {
-        cls.studentIds.push(new Types.ObjectId(studentId));
-        await cls.save();
-    }
+  if (!cls.studentIds.includes(new Types.ObjectId(studentId))) {
+    cls.studentIds.push(new Types.ObjectId(studentId));
+    await cls.save();
+  }
 
-    return cls;
+  return cls;
 };
+
+export const endClassHandler = async () => {};
