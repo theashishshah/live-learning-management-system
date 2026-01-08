@@ -1,8 +1,7 @@
-export type UserRole = "student" | "teacher";
-
-export interface User {
-    _id: string;
+export type UserRoleTypes = "student" | "teacher";
+export interface UserTypes {
+    id: string;
     email: string;
-    role: UserRole;
+    role: UserRoleTypes;
     createdAt: Date;
 }

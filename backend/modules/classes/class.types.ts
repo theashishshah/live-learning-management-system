@@ -1,6 +1,6 @@
-export type ClassStatus = "DRAFT" | "LIVE" | "PUBLISHED" | "ENDED";
+export type ClassStatusTypes = "DRAFT" | "LIVE" | "PUBLISHED" | "ENDED";
 
-export interface Class {
+export interface ClassTypes {
     id: string;
     teacherId: string;
     status: ClassStatus;
