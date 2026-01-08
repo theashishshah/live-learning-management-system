@@ -14,17 +14,17 @@ export class ClassPolicy {
 
     static canView(user: UserTypes, classEntity: ClassTypes): boolean {
         if (user.role === "teacher") {
-            return classEntity.teacherId === user.id
+            return classEntity.teacherId === user.id;
         }
 
         if (user.role === "student") {
-            return classEntity.status === "LIVE" || classEntity.status === "PUBLISHED"
+            return classEntity.status === "LIVE" || classEntity.status === "PUBLISHED";
         }
 
-        return false
+        return false;
     }
 
-    static canEnd(user: User, classEntity: Class): boolean {
+    static canEnd(user: UserTypes, classEntity: ClassTypes): boolean {
         return (
             user.role === "teacher" &&
             classEntity.teacherId === user.id &&
@@ -34,42 +34,44 @@ export class ClassPolicy {
 
     static canUpdate(user: UserTypes, classEntity: ClassTypes): boolean {
         return (
-            user.role === "teacher" && user.id === classEntity.teacherId && classEntity.status !== "ENDED"
-        )
+            user.role === "teacher" &&
+            user.id === classEntity.teacherId &&
+            classEntity.status !== "ENDED"
+        );
     }
 
     static canDelete(user: UserTypes, classEntity: ClassTypes): boolean {
         return (
-            user.role === "teacher" && user.id === classEntity.teacherId && classEntity.status !== "LIVE"
-        )
+            user.role === "teacher" &&
+            user.id === classEntity.teacherId &&
+            classEntity.status !== "LIVE"
+        );
     }
 
     static canStart(user: UserTypes, classEntity: ClassTypes): boolean {
         return (
-            user.role === "teacher". && classEntity.teacherId === user.id && classEntity.status === "PUBLISHED"
-        )
+            user.role === "teacher" &&
+            classEntity.teacherId === user.id &&
+            classEntity.status === "PUBLISHED"
+        );
     }
-
 
     static canPublish(user: UserTypes, classEntity: ClassTypes): boolean {
         return (
-            user.role === "teacher" && user.id === classEntity.teacherId &&
+            user.role === "teacher" &&
+            user.id === classEntity.teacherId &&
             classEntity.status === "DRAFT"
-        )
+        );
     }
-
 
     static canJoin(user: UserTypes, classEntity: ClassTypes): boolean {
-        return (
-            user.role === "student" && classEntity.status === "LIVE"
-        )
+        return user.role === "student" && classEntity.status === "LIVE";
     }
-
 
     static canLeave(user: UserTypes, classEntity: ClassTypes): boolean {
         return (
-            user.role === "student" && ( classEntity.status === "LIVE" || classEntity.status === "ENDED")
-        )
+            user.role === "student" &&
+            (classEntity.status === "LIVE" || classEntity.status === "ENDED")
+        );
     }
-
 }
