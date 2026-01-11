@@ -3,31 +3,31 @@ import "dotenv/config";
 import { mapError } from "../../src/core/errors/error-maper.js";
 
 const dbConnect = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI!, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-      autoIndex: false,
-      maxPoolSize: 10,
-    });
+    try {
+        await mongoose.connect(process.env.MONGODB_URI!, {
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+            autoIndex: false,
+            maxPoolSize: 10,
+        });
 
-    console.log("Database connected successfully.");
-  } catch (error) {
-    console.log(process.env.MONGODB_URI);
-    mapError(error);
-    process.exit(1);
-  }
+        console.log("Database connected successfully.");
+    } catch (error) {
+        console.log(process.env.MONGODB_URI);
+        mapError(error);
+        process.exit(1);
+    }
 };
 
 mongoose.connection.on("disconnected", () => {
-  console.warn(`MongoDB database connection disconnected. Retrying...`);
-  setTimeout(dbConnect, 5 * 1000);
+    console.warn(`MongoDB database connection disconnected. Retrying...`);
+    setTimeout(dbConnect, 5 * 1000);
 });
 
 process.on("SIGINT", async function () {
-  await mongoose.connection.close();
-  console.warn(`Mongodb connection closed due to Ctrl + C press.`);
-  process.exit(0);
+    await mongoose.connection.close();
+    console.warn(`Mongodb connection closed due to Ctrl + C press.`);
+    process.exit(0);
 });
 
 export default dbConnect;

@@ -6,10 +6,10 @@ import classRoutes from "../modules/classes/class.routes.js";
 const router = Router();
 
 router.get("/health", (_, res: Response) => {
-  return res.status(200).json({
-    success: true,
-    message: "Server health is good.",
-  });
+    return res.status(200).json({
+        success: true,
+        message: "Server health is good.",
+    });
 });
 
 router.use("/auth", authRoutes);

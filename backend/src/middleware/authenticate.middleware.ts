@@ -4,33 +4,25 @@ import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
 import type { Role } from "../../modules/auth/auth.service.js";
 
-export const authenticate = async (
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const accessToken = req.cookies.access_token;
+export const authenticate = async (req: Request, _res: Response, next: NextFunction) => {
+    try {
+        const accessToken = req.cookies.access_token;
 
-    if (!accessToken) {
-      throw new AppError("UNAUTHORIZED", 401, "Token missing.");
+        if (!accessToken) {
+            throw new AppError("UNAUTHORIZED", 401, "Token missing.");
+        }
+        const payload = jwt.verify(accessToken, process.env.JWT_SECRET!) as JwtPayload & {
+            role: string;
+        };
+
+        if (!payload.userId) throw new AppError("UNAUTHORIZED", 401, "Token expired");
+
+        req.user = {
+            userId: payload.userId as string,
+            role: payload.role as Role,
+        };
+        next();
+    } catch (err) {
+        next(new AppError("UNAUTHORIZED", 401));
     }
-    const payload = jwt.verify(
-      accessToken,
-      process.env.JWT_SECRET!,
-    ) as JwtPayload & {
-      role: string;
-    };
-
-    if (!payload.userId)
-      throw new AppError("UNAUTHORIZED", 401, "Token expired");
-
-    req.user = {
-      userId: payload.userId as string,
-      role: payload.role as Role,
-    };
-    next();
-  } catch (err) {
-    next(new AppError("UNAUTHORIZED", 401));
-  }
 };

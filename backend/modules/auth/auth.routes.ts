@@ -1,10 +1,10 @@
 import { Router } from "express";
 import {
-  meHandler,
-  signupHandler,
-  loginHandler,
-  logoutHandler,
-  refreshHandler,
+    meHandler,
+    signupHandler,
+    loginHandler,
+    logoutHandler,
+    refreshHandler,
 } from "./auth.controller.js";
 import { authenticate } from "../../src/middleware/authenticate.middleware.js";
 
